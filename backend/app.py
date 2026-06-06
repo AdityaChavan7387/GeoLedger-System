@@ -116,20 +116,21 @@ def fetch_from_gov(vid):
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
+    options.add_argument("--headless=new")          # add this for server environments
     options.binary_location = "/usr/bin/chromium"
     options.add_experimental_option("prefs", {
-        "download.default_directory":      DOWNLOAD_DIR,
-        "download.prompt_for_download":    False,
+        "download.default_directory":         DOWNLOAD_DIR,
+        "download.prompt_for_download":       False,
         "plugins.always_open_pdf_externally": True,
-        "download.directory_upgrade":      True
+        "download.directory_upgrade":         True
     })
 
-    driver = webdriver.Chrome(
-        service=Service(ChromeDriverManager().install()),
-        options=options
+    service = Service(
+        ChromeDriverManager(chrome_type="chromium").install()
     )
-    wait = WebDriverWait(driver, 15)
+    driver = webdriver.Chrome(service=service, options=options)
 
+    wait = WebDriverWait(driver, 15)
     try:
         driver.get("https://digitalsatbara.mahabhumi.gov.in/DSLR/Login/Verify712")
         input_box = wait.until(EC.presence_of_element_located((By.XPATH, "//input")))
